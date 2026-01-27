@@ -79,7 +79,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "response":
 			if payload, ok := msg.Payload.(string); ok {
-				m.messages = append(m.messages, botStyle.Render("Bot: ")+payload)
+				m.messages = append(m.messages, botStyle.Render("Lucci: ")+payload)
 			}
 		case "signed":
 			// Handle "Signed" events (e.g. success message)
