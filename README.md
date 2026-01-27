@@ -50,15 +50,22 @@ go run cmd/luccibot/main.go [command]
 
 ## Development
 
-This project follows the [Standard Go Project Layout](https://github.com/golang-standards/project-layout).
+This project follows a flat directory structure for simplicity and ease of navigation.
 
 ### Project Structure
 
 ```
 .
-├── cmd/luccibot/       # Main entry point for the application
-├── internal/           # Private application and business logic
-├── pkg/                # Library code that can be used by external applications
+├── agent/              # LLM Agent "Brain" logic
+├── bin/                # Compiled binaries
+├── bridge/             # Interface to external skills/scripts ("Hands")
+├── bus/                # Event bus and communication channels
+├── cmd/                # Entry points (Cobra commands)
+├── docs/               # Documentation
+├── logger/             # Logging utilities
+├── skills/             # External scripts (TypeScript/Bun)
+├── tui/                # Terminal User Interface ("Face")
+├── vault/              # Secure signing and key management ("Wallet")
 ├── .github/workflows/  # CI/CD configurations
 ├── Makefile            # Build and task automation
 └── README.md           # This file

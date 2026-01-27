@@ -5,7 +5,7 @@ This document details the core components of the LucciBot architecture, their re
 ---
 
 ## 1. Hub (The Central Nervous System)
-**Location**: `internal/bus/bus.go`
+**Location**: `bus/bus.go`
 
 The **Hub** is the central struct that holds all the communication channels. It acts as the "Bus" for the event-driven architecture, decoupling the services from each other.
 
@@ -18,7 +18,7 @@ The **Hub** is the central struct that holds all the communication channels. It 
 ---
 
 ## 2. Agent (The Brain)
-**Location**: `internal/agent/agent.go`
+**Location**: `agent/agent.go`
 
 The **Agent** is responsible for interpreting user intent. It consumes raw text and decides what action to take.
 
@@ -32,7 +32,7 @@ The **Agent** is responsible for interpreting user intent. It consumes raw text 
 ---
 
 ## 3. TUI (The Face)
-**Location**: `internal/tui/tui.go`
+**Location**: `tui/tui.go`
 
 The **TUI** (Terminal User Interface) is built with [Bubble Tea](https://github.com/charmbracelet/bubbletea). It manages the display state and user input.
 
@@ -44,7 +44,7 @@ The **TUI** (Terminal User Interface) is built with [Bubble Tea](https://github.
 ---
 
 ## 4. Bridge (The Hands)
-**Location**: `internal/bridge/shell.go`
+**Location**: `bridge/shell.go`
 
 The **Bridge** connects the internal Go logic to external "Skills" (scripts, usually TypeScript/Bun).
 
@@ -57,7 +57,7 @@ The **Bridge** connects the internal Go logic to external "Skills" (scripts, usu
 ---
 
 ## 5. Vault (The Wallet)
-**Location**: `internal/vault/vault.go` & `cmd/root.go`
+**Location**: `vault/vault.go` & `cmd/root.go`
 
 The **Vault** is the secure enclave for signing operations. It is designed to be "passive" and synchronous, meaning it doesn't run its own loop internally.
 

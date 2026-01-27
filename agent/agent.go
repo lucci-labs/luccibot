@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lucci-labs/luccibot/internal/bus"
+	"github.com/lucci-labs/luccibot/bus"
 	"google.golang.org/genai"
 )
 

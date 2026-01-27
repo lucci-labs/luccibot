@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/lucci-labs/luccibot/internal/bus"
+	"github.com/lucci-labs/luccibot/bus"
 )
 
 var (

@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/lucci-labs/luccibot/internal/bus"
+	"github.com/lucci-labs/luccibot/bus"
 )
 
 // Bridge handles the execution of external skills/scripts.

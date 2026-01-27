@@ -10,11 +10,11 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/lucci-labs/luccibot/internal/agent"
-	"github.com/lucci-labs/luccibot/internal/bridge"
-	"github.com/lucci-labs/luccibot/internal/bus"
-	"github.com/lucci-labs/luccibot/internal/tui"
-	"github.com/lucci-labs/luccibot/internal/vault"
+	"github.com/lucci-labs/luccibot/agent"
+	"github.com/lucci-labs/luccibot/bridge"
+	"github.com/lucci-labs/luccibot/bus"
+	"github.com/lucci-labs/luccibot/tui"
+	"github.com/lucci-labs/luccibot/vault"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )
