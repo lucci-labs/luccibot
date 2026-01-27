@@ -4,10 +4,13 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/lucci-labs/luccibot)](https://goreportcard.com/report/github.com/lucci-labs/luccibot)
 [![License](https://img.shields.io/github/license/lucci-labs/luccibot)](LICENSE)
 
-**Luccibot** is a CLI-based personal crypto manager and assistant written in Go. It is designed to help users efficiently manage cryptocurrency portfolios, track real-time market trends, and receive personalized insights directly from the terminal.
+**Luccibot** is a **self-hosted**, CLI-based personal crypto manager and assistant written in Go. It is designed to help users efficiently manage cryptocurrency portfolios, track real-time market trends, and receive personalized insights directly from the terminal.
+
+Because it is self-hosted, you retain full control over your data. You can securely store **private keys** and **CEX API credentials** locally on your own machine, ensuring sensitive information never leaves your control.
 
 ## Features
 
+-   **Self-Hosted & Secure**: Run locally to keep your private keys and exchange API tokens safe.
 -   **Portfolio Management**: Track your assets across different wallets and exchanges (Planned).
 -   **Market Tracking**: Real-time price updates and trend analysis (Planned).
 -   **Personalized Insights**: AI-driven recommendations for your portfolio (Planned).
