@@ -1,4 +1,3 @@
-import React from "react";
 // @ts-ignore
 import { createRoot } from "@opentui/react";
 // @ts-ignore
