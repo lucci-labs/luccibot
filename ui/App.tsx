@@ -101,7 +101,6 @@ const App: React.FC<AppProps> = ({ hub }) => {
             {/* @ts-ignore */}
             <text 
               color={thought.status === "working" ? THEME.accent : (thought.status === "error" ? THEME.error : THEME.secondary)} 
-              bold
             >
               ● {thought.status.toUpperCase()}
             </text>

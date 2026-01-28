@@ -24,11 +24,11 @@ export class Agent {
     if (lower.startsWith("swap")) {
       const parts = lower.split(" ");
       const args = parts.slice(1);
-      
-      this.hub.emitThought({ 
-        status: "working", 
+
+      this.hub.emitThought({
+        status: "working",
         message: "Intent identified: Transaction",
-        details: "Preparing to call Bridge..." 
+        details: "Preparing to call Bridge..."
       });
 
       // Simulate a small delay for effect
@@ -38,18 +38,19 @@ export class Agent {
         skill: "swap",
         args: args
       });
-    } 
+    }
     else if (lower === "clear") {
-       // Handled by UI mostly, but we can log
-       this.hub.emitLog({ level: "info", message: "Console cleared." });
-       this.hub.emitThought({ status: "idle", message: "Waiting..." });
+      // Handled by UI mostly, but we can log
+      this.hub.emitLog({ level: "info", message: "Console cleared." });
+      this.hub.emitThought({ status: "thinking", message: "Waiting..." });
+      this.hub.emitThought({ status: "idle", message: "Ready." });
     }
     else {
       // Chat fallback
       await new Promise(r => setTimeout(r, 600)); // "Thinking" time
-      this.hub.emitLog({ 
-        level: "info", 
-        message: `LucciBot: I heard "${input}", but I only know 'swap' right now.` 
+      this.hub.emitLog({
+        level: "info",
+        message: `LucciBot: I heard "${input}", but I only know 'swap' right now.`
       });
       this.hub.emitThought({ status: "idle", message: "Ready." });
     }
