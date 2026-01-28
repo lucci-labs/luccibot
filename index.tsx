@@ -7,12 +7,14 @@ import { Hub } from "./hub/hub";
 import { Agent } from "./agent/agent";
 import { Vault } from "./vault/vault";
 import { Bridge } from "./bridge/bridge";
+import { ConfigService } from "./config/config";
 
 // 1. Initialize System
 const hub = new Hub();
+const configService = new ConfigService(hub);
 const vault = new Vault(hub);
 const bridge = new Bridge(hub, "./skills");
-const agent = new Agent(hub);
+const agent = new Agent(hub, configService);
 
 // 2. Start TUI
 const renderer = await createCliRenderer();

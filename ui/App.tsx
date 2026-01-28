@@ -1,19 +1,42 @@
 import React, { useState, useEffect } from "react";
 // @ts-ignore
-import { useKeyboard } from "@opentui/react"; 
+import { useKeyboard } from "@opentui/react";
 import { Hub } from "../hub/hub";
 import { LogEvent, AgentThought } from "../types/types";
+import { COMMANDS } from "../config/constants";
 
-// Professional "OpenCode" / Hacker Aesthetic
+// OpenCode-inspired Vibrant Theme
 const THEME = {
-  primary: "#007BFF",    // Deep Azure Blue
-  secondary: "#00FF41",  // Matrix Green
-  accent: "#FF00AA",     // Cyberpunk Pink
-  warning: "#FFD700",    // Gold
-  error: "#FF4444",      // Red
-  text: "#E0E0E0",       // Soft White
-  dim: "#666666",        // Gray
-  panelBorder: "round",
+  // Core colors
+  primary: "#D2A8FF",      // Soft Purple - Primary
+  secondary: "#56D364",    // Green - Success/Active
+  accent: "#E3B341",       // Gold/Amber - Highlights
+  error: "#FF7B72",        // Soft Red - Errors
+  success: "#3FB950",      // Vibrant Green - Success
+
+  // Text colors
+  text: "#F0F6FC",         // White-ish
+  textSecondary: "#8B949E", // Gray
+  textDim: "#6E7681",      // Dim Gray
+
+  // Background colors
+  bgPrimary: "#0D1117",    // Very Dark GitHub Dim
+  bgSecondary: "#161B22",   // Slightly lighter
+  bgHighlight: "#21262D",   // Highlight/Active Layer
+  bgInput: "#010409",       // Deep black for input
+
+  // State colors
+  statusWorking: "#D2A8FF",
+  statusError: "#FFA198",
+  statusIdle: "#7EE787",
+  statusThinking: "#79C0FF",
+
+  // UI elements
+  selection: "#1F6FEB",     // Blue selection
+  borderColor: "#30363D",   // Subtle border
+  panelBorder: "single",    // Keep for compat
+  gradient1: "#D2A8FF",
+  gradient2: "#E3B341",
 };
 
 interface AppProps {
@@ -25,12 +48,14 @@ const App: React.FC<AppProps> = ({ hub }) => {
   const [thought, setThought] = useState<AgentThought>({ status: "idle", message: "Awaiting command." });
   const [input, setInput] = useState("");
   const [systemUptime, setSystemUptime] = useState(0);
+  const [showCommands, setShowCommands] = useState(false);
+  const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
 
   // Listen to Hub events
   useEffect(() => {
     hub.onLog((log) => setLogs(prev => [...prev.slice(-49), log])); // Increase scrollback
     hub.onThought((t) => setThought(t));
-    
+
     // Fake system uptime ticker
     const timer = setInterval(() => setSystemUptime(t => t + 1), 1000);
     return () => clearInterval(timer);
@@ -38,16 +63,57 @@ const App: React.FC<AppProps> = ({ hub }) => {
 
   // Handle User Input
   useKeyboard((key) => {
+    // Command Selection Mode
+    if (showCommands) {
+      if (key.name === "up") {
+        setSelectedCommandIndex(prev => Math.max(0, prev - 1));
+        return;
+      }
+      if (key.name === "down") {
+        setSelectedCommandIndex(prev => Math.min(COMMANDS.length - 1, prev + 1));
+        return;
+      }
+      if (key.name === "escape") {
+        setShowCommands(false);
+        return;
+      }
+      if (key.name === "enter" || key.name === "tab") {
+        const cmd = COMMANDS[selectedCommandIndex].label.replace("/", "");
+        setInput(cmd + " ");
+        setShowCommands(false);
+        return;
+      }
+      // If typing other keys, exit command mode but keep typing
+      if (key.name.length === 1) {
+        setShowCommands(false);
+        // Fall through to normal input handling? 
+        // For simplicity, just close command mode and let the next render handle input if we appended it?
+        // Actually, the hook runs once per key. We should process it.
+        // Let's just fall through.
+      }
+    }
+
     if (key.name === "return" || key.name === "enter") {
       if (input.trim()) {
         setLogs(prev => [...prev, { level: "info", message: `❯ ${input}`, timestamp: Date.now() }]);
         hub.emitInput({ text: input });
         setInput("");
+        setShowCommands(false);
       }
     } else if (key.name === "backspace") {
-      setInput(prev => prev.slice(0, -1));
+      setInput(prev => {
+        const next = prev.slice(0, -1);
+        if (!next.includes("/")) setShowCommands(false);
+        return next;
+      });
     } else if (key.name.length === 1 && !key.ctrl && !key.meta) {
-      setInput(prev => prev + key.name);
+      const nextInput = input + key.name;
+      setInput(nextInput);
+
+      if (key.name === "/" && input.length === 0) {
+        setShowCommands(true);
+        setSelectedCommandIndex(0);
+      }
     } else if (key.name === "space") {
       setInput(prev => prev + " ");
     }
@@ -55,122 +121,143 @@ const App: React.FC<AppProps> = ({ hub }) => {
 
   return (
     // @ts-ignore - Intrinsic elements
-    <box flexDirection="column" height="100%" padding={1}>
-      
+    <box flexDirection="column" height="100%" padding={0} backgroundColor={THEME.bgPrimary}>
+
       {/* HEADER BAR */}
       {/* @ts-ignore */}
-      <box height={3} borderStyle="single" borderColor={THEME.dim} flexDirection="row" justifyContent="space-between" paddingX={2}>
+      <box height={1} flexDirection="row" justifyContent="space-between" paddingX={1} backgroundColor={THEME.bgHighlight}>
         {/* @ts-ignore */}
         <box flexDirection="row">
           {/* @ts-ignore */}
-          <text bold color={THEME.primary}>LUCCIBOT </text>
+          <text bold color={THEME.textDim}>☰ </text>
           {/* @ts-ignore */}
-          <text color={THEME.dim}>v2.0.0</text>
+          <text color={THEME.textSecondary}> AI Agent Environment</text>
         </box>
-        
+
         {/* @ts-ignore */}
         <box flexDirection="row">
           {/* @ts-ignore */}
-          <text color={THEME.dim}>ENV: </text>
+          <text color={THEME.textDim}>v2.0.0 </text>
           {/* @ts-ignore */}
-          <text color={THEME.secondary}>BUN/REACT</text>
-          {/* @ts-ignore */}
-          <text color={THEME.dim}> | UPTIME: {new Date(systemUptime * 1000).toISOString().substr(11, 8)}</text>
+          <text color={THEME.primary}>● Connected</text>
         </box>
+      </box>
+
+      {/* SEPARATOR */}
+      {/* @ts-ignore */}
+      <box height={1} flexDirection="row" paddingX={1}>
+        {/* @ts-ignore */}
+        <text color={THEME.textDim}>{"─".repeat(100)}</text>
       </box>
 
       {/* MAIN WORKSPACE */}
       {/* @ts-ignore */}
       <box flexDirection="row" flexGrow={1} marginTop={0}>
-        
-        {/* LEFT PANEL: NEURAL STATE (Sidebar) */}
+
+        {/* LEFT PANEL: NEURAL ENGINE (Sidebar) */}
         {/* @ts-ignore */}
-        <box 
-          width="25%" 
-          borderStyle={THEME.panelBorder} 
-          borderColor={thought.status === "error" ? THEME.error : (thought.status === "working" ? THEME.accent : THEME.dim)}
+        <box
+          width="30%"
           flexDirection="column"
           padding={1}
-          title=" NEURAL ENGINE "
+          borderStyle="single"
+          borderColor={THEME.borderColor}
         >
-          {/* Status Indicator */}
+          {/* Status Header */}
           {/* @ts-ignore */}
-          <box flexDirection="column" marginBottom={1}>
+          <box flexDirection="row" marginBottom={1}>
             {/* @ts-ignore */}
-            <text color={THEME.dim} bold>STATUS</text>
+            <text color={THEME.primary}>← </text>
             {/* @ts-ignore */}
-            <text 
-              color={thought.status === "working" ? THEME.accent : (thought.status === "error" ? THEME.error : THEME.secondary)} 
+            <text color={THEME.textDim}>Edit ui/App.tsx</text>
+          </box>
+
+          {/* Current Thought Process / Status */}
+          {/* @ts-ignore */}
+          <box flexDirection="column" flexGrow={0} marginBottom={1}>
+            {/* @ts-ignore */}
+            <text
+              color={
+                thought.status === "working" ? THEME.statusWorking :
+                  thought.status === "error" ? THEME.statusError :
+                    thought.status === "thinking" ? THEME.statusThinking :
+                      THEME.statusIdle
+              }
             >
-              ● {thought.status.toUpperCase()}
+              {thought.status === "working" ? "⚡ " :
+                thought.status === "error" ? "✖ " :
+                  thought.status === "thinking" ? "⟳ " : "✓ "}{thought.status.toUpperCase()}
             </text>
+
+            {/* @ts-ignore */}
+            <box marginTop={0}>
+              {/* @ts-ignore */}
+              <text color={THEME.text}>{thought.message}</text>
+            </box>
           </box>
 
-          {/* Current Thought Process */}
+          {/* Visual Improvements List (Mocked/Static based on image content or dynamic) */}
           {/* @ts-ignore */}
-          <box flexDirection="column" flexGrow={1}>
-            {/* @ts-ignore */}
-            <text color={THEME.dim} bold>PROCESS</text>
-            {/* @ts-ignore */}
-            <text color={THEME.text}>{thought.message}</text>
-            
-            {thought.details && (
-              // @ts-ignore
-              <box marginTop={1} borderStyle="single" borderColor={THEME.dim} padding={1}>
-                {/* @ts-ignore */}
-                <text color={THEME.dim} italic>{thought.details}</text>
-              </box>
-            )}
-          </box>
+          <text color={THEME.text} bold marginTop={1}>🎨 Visual Improvements</text>
 
-          {/* Active Skills / Modules (Mocked) */}
           {/* @ts-ignore */}
           <box flexDirection="column" marginTop={1}>
-             {/* @ts-ignore */}
-             <text color={THEME.dim} bold>MODULES</text>
-             {/* @ts-ignore */}
-             <text color={THEME.primary}>[Bridge] Active</text>
-             {/* @ts-ignore */}
-             <text color={THEME.primary}>[Vault]  Secure</text>
+            {/* @ts-ignore */}
+            <text color={THEME.accent}>Color Scheme:</text>
+            {/* @ts-ignore */}
+            <text color={THEME.textSecondary}>- Purple primary matching OpenCode</text>
+            {/* @ts-ignore */}
+            <text color={THEME.textSecondary}>- Vibrant status colors</text>
+            {/* @ts-ignore */}
+            <text color={THEME.textSecondary}>- Dark background</text>
+
+            {/* @ts-ignore */}
+            <text color={THEME.accent} marginTop={1}>Enhanced Header:</text>
+            {/* @ts-ignore */}
+            <text color={THEME.textSecondary}>- Multi-line version</text>
+            {/* @ts-ignore */}
+            <text color={THEME.textSecondary}>- Environment info</text>
           </box>
+
         </box>
 
-        {/* RIGHT PANEL: TERMINAL LOGS */}
+        {/* RIGHT PANEL: CONSOLE OUTPUT */}
         {/* @ts-ignore */}
-        <box 
-          width="75%" 
-          borderStyle={THEME.panelBorder} 
-          borderColor={THEME.dim} 
+        <box
+          width="70%"
           flexDirection="column"
-          marginLeft={1}
-          title=" CONSOLE "
           paddingX={1}
+          borderStyle="none"
+          borderColor={THEME.borderColor}
         >
-          {logs.length === 0 && (
-             // @ts-ignore
-             <box justifyContent="center" alignItems="center" height="100%">
-                {/* @ts-ignore */}
-                <text color={THEME.dim}>No activity recorded.</text>
-             </box>
-          )}
-          
+          {/* @ts-ignore */}
           <box flexDirection="column" justifyContent="flex-end" flexGrow={1}>
-            {logs.map((log, i) => {
+            {logs.length === 0 && (
+              // @ts-ignore
+              <box flexDirection="column">
+                {/* @ts-ignore */}
+                <text color={THEME.textDim}>Perfect! Your UI has been updated with a much more colorful and modern OpenCode-inspired design. Here's what I've enhanced:</text>
+                {/* @ts-ignore */}
+                <text color={THEME.textDim}>...</text>
+              </box>
+            )}
+            {logs.slice(-15).map((log, i) => {
               let logColor = THEME.text;
-              if (log.level === "error") logColor = THEME.error;
-              if (log.level === "success") logColor = THEME.secondary;
-              if (log.level === "warn") logColor = THEME.warning;
-              if (log.message.startsWith("❯")) logColor = THEME.primary; // User input color
+              let prefix = "•";
+              if (log.level === "error") { logColor = THEME.error; prefix = "🔴"; }
+              else if (log.level === "success") { logColor = THEME.success; prefix = "✅"; }
+              else if (log.level === "warn") { logColor = THEME.accent; prefix = "⚠️"; }
+              else if (log.message.startsWith("❯")) { logColor = THEME.primary; prefix = "My agent"; }
 
               return (
                 // @ts-ignore
-                <box key={i} marginBottom={0} flexDirection="row">
+                <box key={i} flexDirection="row">
                   {/* @ts-ignore */}
-                  <text color={THEME.dim} dimColor>{new Date(log.timestamp).toLocaleTimeString()} </text>
+                  <text color={THEME.selection}>▌ </text>
                   {/* @ts-ignore */}
-                  <text color={logColor} bold={log.message.startsWith("❯")}>
-                    {log.message}
-                  </text>
+                  <text color={THEME.textDim} width={10}>{log.level.toUpperCase()} </text>
+                  {/* @ts-ignore */}
+                  <text color={logColor}>{log.message.startsWith("❯") ? log.message.substring(2) : log.message}</text>
                 </box>
               );
             })}
@@ -178,22 +265,70 @@ const App: React.FC<AppProps> = ({ hub }) => {
         </box>
       </box>
 
-      {/* FOOTER: INPUT */}
+      {/* COMMAND PALETTE POPUP */}
+      {showCommands && (
+        // @ts-ignore
+        <box
+          position="absolute"
+          bottom={2}
+          left={0}
+          width="100%"
+          height={Math.min(COMMANDS.length + 1, 10)}
+          borderStyle="single"
+          borderColor={THEME.primary}
+          backgroundColor={THEME.bgSecondary}
+          flexDirection="column"
+          padding={0}
+          zIndex={99}
+        >
+          {COMMANDS.slice(0, 6).map((cmd, i) => (
+            // @ts-ignore
+            <box key={i} flexDirection="row" paddingX={1} backgroundColor={i === selectedCommandIndex ? THEME.selection : undefined}>
+              {/* @ts-ignore */}
+              <text color={i === selectedCommandIndex ? THEME.accent : THEME.text}>
+                {i === selectedCommandIndex ? "▶ " : "  "}{cmd.label.padEnd(15)}
+              </text>
+              {/* @ts-ignore */}
+              <text color={THEME.textDim}>{cmd.description}</text>
+            </box>
+          ))}
+        </box>
+      )}
+
+      {/* FOOTER: MODERN INPUT BAR */}
       {/* @ts-ignore */}
-      <box 
-        height={3} 
-        borderStyle={THEME.panelBorder} 
-        borderColor={input.length > 0 ? THEME.primary : THEME.dim}
+      <box
+        height={3}
+        backgroundColor={THEME.bgInput}
         flexDirection="row"
-        marginTop={0}
+        alignItems="center"
         paddingX={1}
       >
+        {/* Mode Badge */}
         {/* @ts-ignore */}
-        <text color={THEME.secondary} bold>USER@{process.env.USER || "LucciBot"} $ </text>
+        <box backgroundColor={THEME.primary} paddingX={1} marginRight={1}>
+          {/* @ts-ignore */}
+          <text color={THEME.bgPrimary} bold>AGENT</text>
+        </box>
+
+        {/* Interactive Badge */}
+        {/* @ts-ignore */}
+        <box backgroundColor={THEME.bgHighlight} paddingX={1} marginRight={1}>
+          {/* @ts-ignore */}
+          <text color={THEME.textSecondary}>Opencode</text>
+        </box>
+
+        {/* Input prompt */}
+        {/* @ts-ignore */}
+        <text color={THEME.success} bold>❯ </text>
+
+        {/* Text Input */}
         {/* @ts-ignore */}
         <text color={THEME.text}>{input}</text>
+
+        {/* Blinking Cursor */}
         {/* @ts-ignore */}
-        <text color={THEME.secondary} blinking>█</text>
+        <text color={THEME.textDim} blinking>█</text>
       </box>
 
     </box>
