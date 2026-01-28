@@ -1,0 +1,25 @@
+{
+  "name": "luccibot",
+  "module": "index.tsx",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.tsx",
+    "build": "tsc --noEmit",
+    "build:release": "bun run scripts/build.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.1.75",
+    "@opentui/react": "^0.1.75",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@opentui/core-darwin-x64": "^0.1.75",
+    "@opentui/core-linux-x64": "^0.1.75",
+    "@types/bun": "latest",
+    "@types/react": "^19.0.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

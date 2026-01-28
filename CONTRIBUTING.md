@@ -1,27 +1,42 @@
-# Contributing to luccibot
+# Contributing to LucciBot
 
-Thank you for your interest in contributing to luccibot!
+Thank you for your interest in improving LucciBot!
 
-## Getting Started
+## Development Stack
 
-1.  Fork the repository.
-2.  Clone your fork: `git clone https://github.com/your-username/luccibot.git`
-3.  Create a branch for your feature or bug fix: `git checkout -b feature/my-new-feature`
+*   **Runtime**: [Bun](https://bun.sh)
+*   **Language**: TypeScript
+*   **UI Framework**: React (via `@opentui/react`)
+*   **Validation**: Zod
 
-## Development
+## Workflow
 
--   **Go Version**: Ensure you have Go 1.24+ installed.
--   **Dependencies**: Run `go mod download` to install dependencies.
--   **Running**: Use `make run` to build and run the application.
--   **Testing**: Run `make test` to execute tests.
+1.  **Fork & Clone**:
+    ```bash
+    git clone https://github.com/your-username/luccibot.git
+    cd luccibot
+    ```
 
-## Pull Requests
+2.  **Install Dependencies**:
+    ```bash
+    bun install
+    ```
 
-1.  Ensure your code follows the project's coding standards.
-2.  Add tests for any new functionality.
-3.  Ensure all tests pass.
-4.  Submit a Pull Request to the `main` branch.
+3.  **Make Changes**:
+    *   **Logic**: Updates to `agent/`, `hub/`, etc. should include relevant tests in `test/`.
+    *   **UI**: Updates to `ui/` should be verified by running the TUI locally (`bun start`).
 
-## Code of Conduct
+4.  **Verify**:
+    *   Run static analysis: `bun run build` (runs `tsc`).
+    *   Run tests: `bun run test`.
 
-Please adhere to standard open-source code of conduct guidelines.
+5.  **Submit PR**:
+    *   Ensure all checks pass.
+    *   Describe your changes clearly.
+
+## Adding Skills
+
+To add a new capability to LucciBot:
+1.  Create a script in `skills/<skill-name>.ts`.
+2.  Ensure it outputs JSON to stdout if it performs a transaction.
+3.  The Agent logic in `agent/agent.ts` currently mocks intent parsing; update it to trigger your new skill.
