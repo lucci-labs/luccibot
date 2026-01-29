@@ -18,6 +18,14 @@ func NewConfig(path string) (*Config, error) {
 		if !os.IsNotExist(err) {
 			return nil, fmt.Errorf("failed to read config file: %w", err)
 		}
+		c := &Config{
+			ProviderKeys: make(map[string]string),
+			ActiveModel:  "",
+		}
+
+		c.Save(path)
+
+		return c, nil
 	}
 
 	c := &Config{

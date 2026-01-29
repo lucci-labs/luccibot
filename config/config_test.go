@@ -61,6 +61,10 @@ func TestConfig(t *testing.T) {
 	saveCfg.SetProviderKey("save_provider", "save_key")
 	saveCfg.SetActiveModel("save-model")
 
+	if err := saveCfg.Save(configPath); err != nil {
+		t.Fatalf("Failed to save config: %v", err)
+	}
+
 	// Load the config into a new instance
 	loadCfg, err := NewConfig(configPath)
 
