@@ -71,8 +71,10 @@ func (a *Agent) processMessage(ctx context.Context, msg string) {
 	// TODO: Use a.Client if available for more complex understanding.
 	// For now, we use the mock response/logic as requested for scaffolding.
 
-	// 1. Send "thinking" log
+	// Test all kind of messages
 	a.Hub.Outbound <- bus.Event{Type: "log", Payload: "Processing: " + msg}
+	a.Hub.Outbound <- bus.Event{Type: "signed", Payload: "Processing: " + msg}
+	a.Hub.Outbound <- bus.Event{Type: "error", Payload: "Processing: " + msg}
 
 	// 2. Simple parsing logic (Mock "Brain")
 	lowerMsg := strings.ToLower(msg)
