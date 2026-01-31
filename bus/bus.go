@@ -2,8 +2,8 @@ package bus
 
 // Event represents a generic message for UI/System communication.
 type Event struct {
-	Type    string      `json:"type"`
-	Payload interface{} `json:"payload"`
+	Type    string `json:"type"`
+	Payload any    `json:"payload"`
 }
 
 // Action represents a request to execute a skill.

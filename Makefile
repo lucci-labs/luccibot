@@ -6,7 +6,7 @@ all: build
 
 build:
 	@echo "Building..."
-	go build -v -o bin/$(BINARY_NAME) ./cmd/luccibot
+	go build -v -o bin/$(BINARY_NAME) ./main.go
 
 test:
 	@echo "Testing..."
