@@ -1,6 +1,6 @@
 .PHONY: all build test clean run lint
 
-BINARY_NAME=luccibot
+BINARY_NAME=lucci
 
 all: build
 
